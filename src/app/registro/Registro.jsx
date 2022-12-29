@@ -9,6 +9,7 @@ import idfront from "./img/id-Card-front.png";
 import idback from "./img/id-Card-back.png";
 import selfie from "./img/Selfie_cedula_Ejemplo.png";
 import cartaAutorizacion from "./img/Carta_autorizacion_icon.jpg";
+import SweetAlert from "sweetalert-react";
 const Registro = () => {
   const [contenedor, setContenedor] = useState(false);
 
@@ -67,13 +68,13 @@ const Registro = () => {
       celularDos: "",
       mail: "",
       mailDos: "",
-      conRuc: false,
+      conRuc: 0,
       provincias: "",
       ciudades: "",
       direccion: "",
       formato: "",
       vigencia: "",
-      express: false,
+      express: 0,
       fileFront: "",
       fileBack: "",
       fileCarta: "",
@@ -83,37 +84,42 @@ const Registro = () => {
       //console.log(formData);
       save(formData);
     },
-    // validationSchema: Yup.object({
-    //   nombreCompleto: Yup.string().required(),
-    //   fechaNacimiento: Yup.date().required(),
-    //   tipoIdentificacion: Yup.string().required(),
-    //   identificacion: Yup.string().required().max(13),
-    //   nacionalidad: Yup.string().required(),
-    //   apellidoUno: Yup.string().required(),
-    //   apellidoDos: Yup.string().required(),
-    //   codigoDactilar: Yup.string().required(),
-    //   sexo: Yup.string().required(),
-    //   celular: Yup.string().required(),
-    //   celularDos: Yup.string(),
-    //   mail: Yup.string().email("Debe ser un email válido").required(),
-    //   mailDos: Yup.string().email("Debe ser un email válido"),
-    //   provincias: Yup.string().required(),
-    //   ciudades: Yup.string().required(),
-    //   direccion: Yup.string().required(),
-    //   formato: Yup.string().required(),
-    //   vigencia: Yup.string().required(),
-    //   express: Yup.bool(),
-    // }),
+    validationSchema: Yup.object({
+      nombreCompleto: Yup.string().required(),
+      fechaNacimiento: Yup.date().required(),
+      tipoIdentificacion: Yup.string().required(),
+      identificacion: Yup.string().required().max(13),
+      nacionalidad: Yup.string().required(),
+      apellidoUno: Yup.string().required(),
+      apellidoDos: Yup.string().required(),
+      codigoDactilar: Yup.string().required(),
+      sexo: Yup.string().required(),
+      celular: Yup.string().required(),
+      celularDos: Yup.string(),
+      mail: Yup.string().email("Debe ser un email válido").required(),
+      mailDos: Yup.string().email("Debe ser un email válido"),
+      provincias: Yup.string().required(),
+      ciudades: Yup.string().required(),
+      direccion: Yup.string().required(),
+      formato: Yup.string().required(),
+      vigencia: Yup.string().required(),
+      express: Yup.bool(),
+    }),
   });
   const save = async (formData) => {
     await saveFormularioRequest(formData)
       .then((res) => {
-        //console.log(res);
+        console.log(res);
         formik.handleReset();
-        alert('Información guardada correctamente');
+        alert('Si toda su información es válida, en breve uno de nuestros asesores se pondrá en contacto');
+        // <SweetAlert
+        //   title="Éxito"
+        //   text="Si toda su información es válida, en breve uno de nuestros asesores se pondrá en contacto"
+        // />;
+        regresar();
       })
       .catch((error) => {
-        alert('Ocurrió un error, intente más tarde');
+        alert("Ocurrió un error, intente más tarde");
         console.log(error.response.data);
         console.log(error.response.data.error);
       });
