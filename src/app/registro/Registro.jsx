@@ -54,19 +54,19 @@ const Registro = () => {
   ];
   const formik = useFormik({
     initialValues: {
-      nombres: "",
+      nombreCompleto: "",
       fechaNacimiento: "",
       tipoIdentificacion: "",
       identificacion: "",
       nacionalidad: "",
       apellidoUno: "",
       apellidoDos: "",
-      codDactilar: "",
+      codigoDactilar: "",
       sexo: "",
       celular: "",
       celularDos: "",
-      email: "",
-      emailDos: "",
+      mail: "",
+      mailDos: "",
       conRuc: false,
       provincias: "",
       ciudades: "",
@@ -95,8 +95,8 @@ const Registro = () => {
     //   sexo: Yup.string().required(),
     //   celular: Yup.string().required(),
     //   celularDos: Yup.string(),
-    //   email: Yup.string().email("Debe ser un email válido").required(),
-    //   emailDos: Yup.string().email("Debe ser un email válido"),
+    //   mail: Yup.string().email("Debe ser un email válido").required(),
+    //   mailDos: Yup.string().email("Debe ser un email válido"),
     //   provincias: Yup.string().required(),
     //   ciudades: Yup.string().required(),
     //   direccion: Yup.string().required(),
@@ -115,6 +115,7 @@ const Registro = () => {
       .catch((error) => {
         alert('Ocurrió un error, intente más tarde');
         console.log(error.response.data);
+        console.log(error.response.data.error);
       });
   };
   const regresar = () => {
@@ -144,7 +145,7 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      <img src={idfront} />
+                      {/* <img src={idfront} /> */}
                       <Form.Input
                         id="fileFront"
                         type="file"
@@ -160,7 +161,7 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      <img src={idback} />
+                      {/* <img src={idback} /> */}
                       <Form.Input
                         type="file"
                         name="fileBack"
@@ -176,7 +177,7 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      <img src={selfie} />
+                      {/* <img src={selfie} /> */}
                       <Form.Input
                         type="file"
                         name="fileSelfie"
@@ -190,7 +191,7 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      <img src={cartaAutorizacion} />
+                      {/* <img src={cartaAutorizacion} /> */}
                       <Form.Input
                         type="file"
                         name="fileCarta"
@@ -319,18 +320,18 @@ const Registro = () => {
                 <Form.Input
                   type="text"
                   placeholder="Email"
-                  name="email"
+                  name="mail"
                   onChange={formik.handleChange}
-                  error={formik.errors.email}
-                  value={formik.values.email}
+                  error={formik.errors.mail}
+                  value={formik.values.mail}
                 />
                 <Form.Input
                   type="text"
                   placeholder="Email2"
-                  name="emailDos"
+                  name="mailDos"
                   onChange={formik.handleChange}
-                  error={formik.errors.emailDos}
-                  value={formik.values.emailDos}
+                  error={formik.errors.mailDos}
+                  value={formik.values.mailDos}
                 />
               </div>
             </div>
