@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Container, Form, Radio } from "semantic-ui-react";
+import { Button, Container, Form, Radio, Message } from "semantic-ui-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { saveFormularioRequest } from "../../api/FormRequest";
@@ -9,13 +9,18 @@ import idfront from "./img/id-Card-front.png";
 import idback from "./img/id-Card-back.png";
 import selfie from "./img/Selfie_cedula_Ejemplo.png";
 import cartaAutorizacion from "./img/Carta_autorizacion_icon.jpg";
-import SweetAlert from "sweetalert-react";
+import { sub } from "date-fns/fp";
+import { useEffect } from "react";
 const Registro = () => {
   const [contenedor, setContenedor] = useState(false);
+  const [tipoIdentificacion, setTipoIdentificacion] = useState();
+  const [maxLengthIdentificacion, setMaxLengthIdentificacion] = useState();
+  const [showAlert, setShowAlert] = useState(false);
+  const [showAlertError, setShowAlertError] = useState(false);
 
   const IdentificacionOption = [
     { key: 1, value: "CEDULA", text: "CEDULA" },
-    { key: 2, value: "PASAPORTE", text: "PASAPORTE" },
+    { key: 2, value: "RUC", text: "RUC" },
   ];
 
   const Nacionalidad = [
@@ -40,9 +45,9 @@ const Registro = () => {
   ];
 
   const Formato = [
-    // { key: 1, value: 'FIRMA EN LA NUBE', text: 'FIRMA EN LA NUBE' },
+    { key: 1, value: "FIRMA EN LA NUBE", text: "FIRMA EN LA NUBE" },
     { key: 2, value: "ARCHIVO .P12", text: "ARCHIVO .P12" },
-    // { key: 3, value: 'EN TOKEN', text: 'EN TOKEN' }
+    { key: 3, value: "EN TOKEN", text: "EN TOKEN" },
   ];
 
   const Vigencia = [
@@ -53,6 +58,35 @@ const Registro = () => {
     { key: 5, value: "5 años", text: "5 años" },
     { key: 6, value: "7 días", text: "7 días" },
   ];
+
+  useEffect(() => {
+    switch (tipoIdentificacion) {
+      case "CEDULA":
+        setMaxLengthIdentificacion(10);
+        break;
+      case "RUC":
+        setMaxLengthIdentificacion(13);
+      default:
+        break;
+    }
+  }, [tipoIdentificacion]);
+
+  useEffect(() => {
+    if (showAlert) {
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+    }
+  }, [showAlert]);
+
+  useEffect(() => {
+    if (showAlertError) {
+      setTimeout(() => {
+        setShowAlertError(false);
+      }, 5000);
+    }
+  }, [showAlertError]);
+
   const formik = useFormik({
     initialValues: {
       nombreCompleto: "",
@@ -81,47 +115,63 @@ const Registro = () => {
       fileSelfie: "",
     },
     onSubmit: (formData) => {
-      //console.log(formData);
+      // console.log(formData);
       save(formData);
     },
-    validationSchema: Yup.object({
-      nombreCompleto: Yup.string().required(),
-      fechaNacimiento: Yup.date().required(),
-      tipoIdentificacion: Yup.string().required(),
-      identificacion: Yup.string().required().max(13),
-      nacionalidad: Yup.string().required(),
-      apellidoUno: Yup.string().required(),
-      apellidoDos: Yup.string().required(),
-      codigoDactilar: Yup.string().required(),
-      sexo: Yup.string().required(),
-      celular: Yup.string().required(),
-      celularDos: Yup.string(),
-      mail: Yup.string().email("Debe ser un email válido").required(),
-      mailDos: Yup.string().email("Debe ser un email válido"),
-      provincias: Yup.string().required(),
-      ciudades: Yup.string().required(),
-      direccion: Yup.string().required(),
-      formato: Yup.string().required(),
-      vigencia: Yup.string().required(),
-      express: Yup.bool(),
-    }),
+    //validationSchema: validacionSchema,
   });
+
+  const validacionSchema = Yup.object({
+    nombreCompleto: Yup.string().required("Campo obligatorio"),
+    fechaNacimiento: Yup.date()
+      .required("Campo obligatorio")
+      .max(sub({ years: 18 }, new Date()), "Mínimo debe tener 18 años"),
+    tipoIdentificacion: Yup.string().required("Campo obligatorio"),
+    identificacion: Yup.string("Ingrese sólo números")
+      .required("Campo obligatorio")
+      .when("tipoIdentificacion", {
+        is: "CEDULA",
+        then: (schema) =>
+          schema.max(10, "La cédula debe tener máximo 10 dígitos"),
+      })
+      .when("tipoIdentificacion", {
+        is: "RUC",
+        then: (schema) => schema.max(13, "El RUC debe tener máximo 13 dígitos"),
+      }),
+    nacionalidad: Yup.string().required("Campo obligatorio"),
+    apellidoUno: Yup.string().required("Campo obligatorio"),
+    apellidoDos: Yup.string().required("Campo obligatorio"),
+    codigoDactilar: Yup.string().required("Campo obligatorio").max(10),
+    sexo: Yup.string().required("Campo obligatorio"),
+    celular: Yup.string()
+      .required("Campo obligatorio")
+      .min(10, "Faltan dígitos")
+      .max(10, "El número de celular debe ser máximo de 10 dígitos"),
+    celularDos: Yup.string()
+      .min(10, "Faltan dígitos")
+      .max(10, "El número de celular debe ser máximo de 10 dígitos"),
+    mail: Yup.string()
+      .email("No es un correo válido")
+      .required("Campo obligatorio"),
+    mailDos: Yup.string().email("No es un correo válido"),
+    provincias: Yup.string().required("Campo obligatorio"),
+    ciudades: Yup.string().required("Campo obligatorio"),
+    direccion: Yup.string().required("Campo obligatorio"),
+    formato: Yup.string().required("Campo obligatorio"),
+    vigencia: Yup.string().required("Campo obligatorio"),
+    express: Yup.bool(),
+  });
+
   const save = async (formData) => {
     await saveFormularioRequest(formData)
       .then((res) => {
         console.log(res);
+        setShowAlert(true);
         formik.handleReset();
-        alert('Si toda su información es válida, en breve uno de nuestros asesores se pondrá en contacto');
-        // <SweetAlert
-        //   title="Éxito"
-        //   text="Si toda su información es válida, en breve uno de nuestros asesores se pondrá en contacto"
-        // />;
         regresar();
       })
       .catch((error) => {
-        alert("Ocurrió un error, intente más tarde");
-        console.log(error.response.data);
-        console.log(error.response.data.error);
+        setShowAlertError(true);
       });
   };
   const regresar = () => {
@@ -134,6 +184,14 @@ const Registro = () => {
       formik.setFieldValue(nombre, e.target.files[0]);
     }
   };
+  const dismiss = () => {
+    setShowAlert(false);
+  };
+
+  const dismissError = () => {
+    setShowAlertError(false);
+  };
+
   return (
     <Container>
       <br />
@@ -146,6 +204,14 @@ const Registro = () => {
           // <Documentos setContenedor={setContenedor} formik={formik} />
           <>
             <h3 style={{ textAlign: "center" }}>DOCUMENTOS NECESARIOS</h3>
+            {showAlertError && (
+              <>
+                <Message floating negative onDismiss={dismissError}>
+                  <Message.Header>¡Error!</Message.Header>
+                  <p>Ocurrió un error, intente más tarde.</p>
+                </Message>
+              </>
+            )}
             <div className="ui two column grid">
               <div className="column">
                 <div className="ui segment">
@@ -215,6 +281,14 @@ const Registro = () => {
         ) : (
           <>
             <h3 style={{ textAlign: "center" }}>DATOS PERSONALES</h3>
+            {showAlert && (
+              <>
+                <Message floating info onDismiss={dismiss}>
+                  <Message.Header>¡Exito!</Message.Header>
+                  <p>Información almacenada con éxito</p>
+                </Message>
+              </>
+            )}
             <div className="ui three column grid">
               <div className="column">
                 <Form.Dropdown
@@ -224,9 +298,10 @@ const Registro = () => {
                   selection
                   error={formik.errors.tipoIdentificacion}
                   value={formik.values.tipoIdentificacion}
-                  onChange={(_, data) =>
-                    formik.setFieldValue("tipoIdentificacion", data.value)
-                  }
+                  onChange={(_, data) => {
+                    formik.setFieldValue("tipoIdentificacion", data.value);
+                    setTipoIdentificacion(data.value);
+                  }}
                 />
                 <Form.Input
                   type="text"
@@ -252,7 +327,11 @@ const Registro = () => {
                   onChange={formik.handleChange}
                   error={formik.errors.identificacion}
                   value={formik.values.identificacion}
+                  maxLength={maxLengthIdentificacion}
                 />
+                <Form.Group>
+                  <></>
+                </Form.Group>
                 <Form.Input
                   type="text"
                   placeholder="Primer apellido"
@@ -281,6 +360,7 @@ const Registro = () => {
                   onChange={formik.handleChange}
                   error={formik.errors.codigoDactilar}
                   value={formik.values.codigoDactilar}
+                  maxLength={10}
                 />
                 <Form.Input
                   type="text"
@@ -306,20 +386,22 @@ const Registro = () => {
             <div className="ui two column grid">
               <div className="column">
                 <Form.Input
-                  type="text"
+                  type="number"
                   placeholder="Celular"
                   name="celular"
                   onChange={formik.handleChange}
                   error={formik.errors.celular}
                   value={formik.values.celular}
+                  maxLength={10}
                 />
                 <Form.Input
-                  type="text"
+                  type="number"
                   placeholder="Celular2"
                   name="celularDos"
                   onChange={formik.handleChange}
                   error={formik.errors.celularDos}
                   value={formik.values.celularDos}
+                  maxLength={10}
                 />
               </div>
               <div className="column">
@@ -473,9 +555,28 @@ const Registro = () => {
         )}
         {contenedor && (
           <>
-            <Button className="ui primary button" type="submit">
+            <Button
+              className="ui primary button"
+              type="submit"
+              disabled={Object.keys(formik.errors).length > 0}
+            >
               Guardar
             </Button>
+            {Object.keys(formik.errors).length > 0 && (
+              <>
+                {/* <h5>Tiene errores en el formulario</h5> */}
+                <p>
+                  <strong>Los siguientes campos tienes errores:</strong>{" "}
+                  {Object.keys(formik.errors).map((error) => error + "  ")}
+                </p>
+                <h4>
+                  <strong>
+                    El botón de guardar se activará cuando los errores sean
+                    solventados.
+                  </strong>
+                </h4>
+              </>
+            )}
           </>
         )}
       </Form>
