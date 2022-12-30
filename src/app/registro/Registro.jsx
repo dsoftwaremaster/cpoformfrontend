@@ -386,7 +386,7 @@ const Registro = () => {
             <div className="ui two column grid">
               <div className="column">
                 <Form.Input
-                  type="number"
+                  type="text"
                   placeholder="Celular"
                   name="celular"
                   onChange={formik.handleChange}
@@ -395,8 +395,8 @@ const Registro = () => {
                   maxLength={10}
                 />
                 <Form.Input
-                  type="number"
-                  placeholder="Celular2"
+                  type="text"
+                  placeholder="Otro número Celular"
                   name="celularDos"
                   onChange={formik.handleChange}
                   error={formik.errors.celularDos}
@@ -415,7 +415,7 @@ const Registro = () => {
                 />
                 <Form.Input
                   type="text"
-                  placeholder="Email2"
+                  placeholder="Email alternativo"
                   name="mailDos"
                   onChange={formik.handleChange}
                   error={formik.errors.mailDos}
