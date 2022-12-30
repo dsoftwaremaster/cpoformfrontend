@@ -59,6 +59,47 @@ const Registro = () => {
     { key: 6, value: "7 días", text: "7 días" },
   ];
 
+  const validacionSchema = Yup.object({
+    nombreCompleto: Yup.string().required("Campo obligatorio"),
+    fechaNacimiento: Yup.date()
+      .required("Campo obligatorio")
+      .max(sub({ years: 18 }, new Date()), "Mínimo debe tener 18 años"),
+    tipoIdentificacion: Yup.string().required("Campo obligatorio"),
+    identificacion: Yup.string("Ingrese sólo números")
+      .required("Campo obligatorio")
+      .when("tipoIdentificacion", {
+        is: "CEDULA",
+        then: (schema) =>
+          schema.max(10, "La cédula debe tener máximo 10 dígitos"),
+      })
+      .when("tipoIdentificacion", {
+        is: "RUC",
+        then: (schema) => schema.max(13, "El RUC debe tener máximo 13 dígitos"),
+      }),
+    nacionalidad: Yup.string().required("Campo obligatorio"),
+    apellidoUno: Yup.string().required("Campo obligatorio"),
+    apellidoDos: Yup.string().required("Campo obligatorio"),
+    codigoDactilar: Yup.string().required("Campo obligatorio").max(10),
+    sexo: Yup.string().required("Campo obligatorio"),
+    celular: Yup.string()
+      .required("Campo obligatorio")
+      .min(10, "Faltan dígitos")
+      .max(10, "El número de celular debe ser máximo de 10 dígitos"),
+    celularDos: Yup.string()
+      .min(10, "Faltan dígitos")
+      .max(10, "El número de celular debe ser máximo de 10 dígitos"),
+    mail: Yup.string()
+      .email("No es un correo válido")
+      .required("Campo obligatorio"),
+    mailDos: Yup.string().email("No es un correo válido"),
+    provincias: Yup.string().required("Campo obligatorio"),
+    ciudades: Yup.string().required("Campo obligatorio"),
+    direccion: Yup.string().required("Campo obligatorio"),
+    formato: Yup.string().required("Campo obligatorio"),
+    vigencia: Yup.string().required("Campo obligatorio"),
+    express: Yup.bool(),
+  });
+
   useEffect(() => {
     switch (tipoIdentificacion) {
       case "CEDULA":
@@ -119,47 +160,6 @@ const Registro = () => {
       save(formData);
     },
     validationSchema: validacionSchema,
-  });
-
-  const validacionSchema = Yup.object({
-    nombreCompleto: Yup.string().required("Campo obligatorio"),
-    fechaNacimiento: Yup.date()
-      .required("Campo obligatorio")
-      .max(sub({ years: 18 }, new Date()), "Mínimo debe tener 18 años"),
-    tipoIdentificacion: Yup.string().required("Campo obligatorio"),
-    identificacion: Yup.string("Ingrese sólo números")
-      .required("Campo obligatorio")
-      .when("tipoIdentificacion", {
-        is: "CEDULA",
-        then: (schema) =>
-          schema.max(10, "La cédula debe tener máximo 10 dígitos"),
-      })
-      .when("tipoIdentificacion", {
-        is: "RUC",
-        then: (schema) => schema.max(13, "El RUC debe tener máximo 13 dígitos"),
-      }),
-    nacionalidad: Yup.string().required("Campo obligatorio"),
-    apellidoUno: Yup.string().required("Campo obligatorio"),
-    apellidoDos: Yup.string().required("Campo obligatorio"),
-    codigoDactilar: Yup.string().required("Campo obligatorio").max(10),
-    sexo: Yup.string().required("Campo obligatorio"),
-    celular: Yup.string()
-      .required("Campo obligatorio")
-      .min(10, "Faltan dígitos")
-      .max(10, "El número de celular debe ser máximo de 10 dígitos"),
-    celularDos: Yup.string()
-      .min(10, "Faltan dígitos")
-      .max(10, "El número de celular debe ser máximo de 10 dígitos"),
-    mail: Yup.string()
-      .email("No es un correo válido")
-      .required("Campo obligatorio"),
-    mailDos: Yup.string().email("No es un correo válido"),
-    provincias: Yup.string().required("Campo obligatorio"),
-    ciudades: Yup.string().required("Campo obligatorio"),
-    direccion: Yup.string().required("Campo obligatorio"),
-    formato: Yup.string().required("Campo obligatorio"),
-    vigencia: Yup.string().required("Campo obligatorio"),
-    express: Yup.bool(),
   });
 
   const save = async (formData) => {
@@ -564,17 +564,20 @@ const Registro = () => {
             </Button>
             {Object.keys(formik.errors).length > 0 && (
               <>
-                {/* <h5>Tiene errores en el formulario</h5> */}
-                <p>
-                  <strong>Los siguientes campos tienes errores:</strong>{" "}
-                  {Object.keys(formik.errors).map((error) => error + "  ")}
-                </p>
-                <h4>
-                  <strong>
-                    El botón de guardar se activará cuando los errores sean
-                    solventados.
-                  </strong>
-                </h4>
+                <Message floating color="yellow">
+                  {/* <Message.Header>Error</Message.Header> */}
+                  <Message.Content>
+                    <strong>Los siguientes campos tienes errores:</strong>{" "}
+                    {Object.keys(formik.errors).map((error) => error + "    ")}.{" "}
+                    <br />
+                    <center>
+                      <strong>
+                        El botón de guardar se activará cuando los errores sean
+                        corregidos.
+                      </strong>
+                    </center>
+                  </Message.Content>
+                </Message>
               </>
             )}
           </>
