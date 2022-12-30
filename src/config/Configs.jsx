@@ -12,7 +12,7 @@ const api_config = {
         url: 'http://192.168.100.5:8000/api',
     },
     produccion: {
-        url: 'http://localhost/cpoformbackend/public/api',
+        url: 'http://52.206.72.188/backform/public/api',
     }
 
 }
