@@ -1,5 +1,5 @@
 //AMBIENTES - local, test, produccion
-const ambiente = 'local';
+const ambiente = 'produccion';
 
 const api_config = {
     local: {
@@ -12,7 +12,7 @@ const api_config = {
         url: 'http://192.168.100.5:8000/api',
     },
     produccion: {
-        url: 'http://52.206.72.188/CPOFacturacionWebBack/public/api',
+        url: 'http://localhost/cpoformbackend/public/api',
     }
 
 }
