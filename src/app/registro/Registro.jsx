@@ -118,7 +118,7 @@ const Registro = () => {
       // console.log(formData);
       save(formData);
     },
-    //validationSchema: validacionSchema,
+    validationSchema: validacionSchema,
   });
 
   const validacionSchema = Yup.object({
