@@ -23,6 +23,7 @@ const Registro = () => {
   const [selectedProvincia, setSelectedProvincia] = useState();
   const [ciudadesTodas, setCiudadesTodas] = useState();
   const [ciudades, setCiudades] = useState();
+  const [conRuc, setConRuc] = useState(false);
 
   const IdentificacionOption = [
     { key: 1, value: "CEDULA", text: "CEDULA" },
@@ -56,6 +57,7 @@ const Registro = () => {
   ];
 
   useEffect(() => {
+    console.log("fecha:: ", sub({ years: 18 }, new Date()));
     ProvinciasRequest()
       .then((res) => {
         let provincias = [];
@@ -99,7 +101,8 @@ const Registro = () => {
     nombreCompleto: Yup.string().required("Campo obligatorio"),
     fechaNacimiento: Yup.date()
       .required("Campo obligatorio")
-      .max(sub({ years: 18 }, new Date()), "Mínimo debe tener 18 años"),
+      .max(sub({ years: 18 }, new Date()), "Mínimo debe tener 18 años")
+      .min(sub({ years: 75 }, new Date()), "Máximo debe tener 75 años"),
     tipoIdentificacion: Yup.string().required("Campo obligatorio"),
     identificacion: Yup.string("Ingrese sólo números")
       .required("Campo obligatorio")
@@ -109,8 +112,17 @@ const Registro = () => {
           schema.max(10, "La cédula debe tener máximo 10 dígitos"),
       })
       .when("tipoIdentificacion", {
+        is: "CEDULA",
+        then: (schema) =>
+          schema.min(10, "La cédula debe tener mínimo 10 dígitos"),
+      })
+      .when("tipoIdentificacion", {
         is: "RUC",
         then: (schema) => schema.max(13, "El RUC debe tener máximo 13 dígitos"),
+      })
+      .when("tipoIdentificacion", {
+        is: "RUC",
+        then: (schema) => schema.min(13, "El RUC debe tener mínimo 13 dígitos"),
       }),
     nacionalidad: Yup.string().required("Campo obligatorio"),
     apellidoUno: Yup.string().required("Campo obligatorio"),
@@ -134,6 +146,10 @@ const Registro = () => {
     formato: Yup.string().required("Campo obligatorio"),
     vigencia: Yup.string().required("Campo obligatorio"),
     express: Yup.bool(),
+    firmaConRuc: Yup.string()
+      .min(13, "El RUC debe tener mínimo 13 dígitos")
+      .max(13, "El RUC debe tener máximo 13 dígitos")
+      .test("Requerido", "Campo obligatorio", (value) => validateConRuc()),
   });
 
   useEffect(() => {
@@ -179,7 +195,6 @@ const Registro = () => {
       celularDos: "",
       mail: "",
       mailDos: "",
-      conRuc: 0,
       provincias: "",
       ciudades: "",
       direccion: "",
@@ -226,6 +241,10 @@ const Registro = () => {
     setShowAlertError(false);
   };
 
+  const validateConRuc = () => {
+    return conRuc ? false : true;
+  };
+
   return (
     <Container>
       <br />
@@ -251,13 +270,14 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      {/* <img src={idfront} /> */}
+                      <img src={idfront} />
                       <Form.Input
                         id="fileFront"
                         type="file"
                         name="fileFront"
                         onChange={(e) => handleFileChange(e, "fileFront")}
                       ></Form.Input>
+                      <h4>Foto lado frontal de su Cédula</h4>
                     </a>
                   </>
                   {/* <input type="file" onChange={handleFileChange} /> */}
@@ -267,12 +287,13 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      {/* <img src={idback} /> */}
+                      <img src={idback} />
                       <Form.Input
                         type="file"
                         name="fileBack"
                         onChange={(e) => handleFileChange(e, "fileBack")}
                       />
+                      <h4>Foto lado posterior de su Cédula</h4>
                     </a>
                   </>
                 </div>
@@ -283,12 +304,13 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      {/* <img src={selfie} /> */}
+                      <img src={selfie} />
                       <Form.Input
                         type="file"
                         name="fileSelfie"
                         onChange={(e) => handleFileChange(e, "fileSelfie")}
                       />
+                      <h4>Foto selfie con su Cédula</h4>
                     </a>
                   </>
                 </div>
@@ -297,12 +319,13 @@ const Registro = () => {
                 <div className="ui segment">
                   <>
                     <a className="ui medium image">
-                      {/* <img src={cartaAutorizacion} /> */}
+                      <img src={cartaAutorizacion} />
                       <Form.Input
                         type="file"
                         name="fileCarta"
                         onChange={(e) => handleFileChange(e, "fileCarta")}
                       />
+                      <h4>Copia del RUC</h4>
                     </a>
                   </>
                 </div>
@@ -460,21 +483,86 @@ const Registro = () => {
             <div className="ui three column grid">
               <div className="sixteen wide column">
                 <div className="ui segment">
-                  <div className="ui three column grid">
-                    <div className="column">
-                      <Form.Field>Con RUC:</Form.Field>
+                  {/* ------------------CON RUC-------------- */}
+                  {conRuc ? (
+                    <div className="ui four column grid">
+                      <div className="column">
+                        <Form.Field>Con RUC:</Form.Field>
+                      </div>
+                      <div className="column">
+                        <Form.Field>
+                          <Radio
+                            label="Si"
+                            name="conRuc"
+                            onChange={() => {
+                              console.log("clickeo Si");
+                              setConRuc(true);
+                            }}
+                            checked={conRuc}
+                          />
+                        </Form.Field>
+                      </div>
+                      <div className="column">
+                        <Form.Field>
+                          <Radio
+                            label="No"
+                            name="conRuc"
+                            onChange={() => {
+                              console.log("clickeo No");
+                              setConRuc(false);
+                            }}
+                            checked={!conRuc}
+                          />
+                        </Form.Field>
+                      </div>
+                      <div className="column">
+                        <Form.Field>
+                          <Form.Input
+                            type="text"
+                            placeholder="RUC"
+                            name="firmaConRuc"
+                            onChange={formik.handleChange}
+                            error={formik.errors.firmaConRuc}
+                            value={formik.values.firmaConRuc}
+                            maxLength={13}
+                          />
+                        </Form.Field>
+                      </div>
                     </div>
-                    <div className="column">
-                      <Form.Field>
-                        <Radio label="Si" name="conRuc" value="1" />
-                      </Form.Field>
+                  ) : (
+                    <div className="ui three column grid">
+                      <div className="column">
+                        <Form.Field>Con RUC:</Form.Field>
+                      </div>
+                      <div className="column">
+                        <Form.Field>
+                          <Radio
+                            label="Si"
+                            name="conRuc"
+                            onChange={() => {
+                              console.log("clickeo Si");
+                              setConRuc(true);
+                            }}
+                            checked={conRuc}
+                          />
+                        </Form.Field>
+                      </div>
+                      <div className="column">
+                        <Form.Field>
+                          <Radio
+                            label="No"
+                            name="conRuc"
+                            onChange={() => {
+                              console.log("clickeo No");
+                              setConRuc(false);
+                            }}
+                            checked={!conRuc}
+                          />
+                        </Form.Field>
+                      </div>
                     </div>
-                    <div className="column">
-                      <Form.Field>
-                        <Radio label="No" name="conRuc" value="0" />
-                      </Form.Field>
-                    </div>
-                  </div>
+                  )}
+                  {/* END------------CON RUC--------------END */}
                 </div>
               </div>
             </div>
