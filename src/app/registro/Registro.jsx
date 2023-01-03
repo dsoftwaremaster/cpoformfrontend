@@ -149,7 +149,7 @@ const Registro = () => {
     firmaConRuc: Yup.string()
       .min(13, "El RUC debe tener mínimo 13 dígitos")
       .max(13, "El RUC debe tener máximo 13 dígitos")
-      .test("Requerido", "Campo obligatorio", (value) => validateConRuc()),
+      .test("Requerido", "Campo obligatorio", (value) => validateConRuc(value)),
   });
 
   useEffect(() => {
@@ -241,8 +241,17 @@ const Registro = () => {
     setShowAlertError(false);
   };
 
-  const validateConRuc = () => {
-    return conRuc ? false : true;
+  const validateConRuc = (value) => {
+    console.log("dentro del validate: ", value);
+    if (conRuc) {
+      if (value === undefined || value === "" || value === "undefined" || value === null) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
   };
 
   return (
