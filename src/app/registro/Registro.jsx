@@ -11,12 +11,18 @@ import selfie from "./img/Selfie_cedula_Ejemplo.png";
 import cartaAutorizacion from "./img/Carta_autorizacion_icon.jpg";
 import { sub } from "date-fns/fp";
 import { useEffect } from "react";
+import { CiudadesRequest, ProvinciasRequest } from "../../api/CatalogoRequest";
+
 const Registro = () => {
   const [contenedor, setContenedor] = useState(false);
   const [tipoIdentificacion, setTipoIdentificacion] = useState();
   const [maxLengthIdentificacion, setMaxLengthIdentificacion] = useState();
   const [showAlert, setShowAlert] = useState(false);
   const [showAlertError, setShowAlertError] = useState(false);
+  const [provincias, setProvincias] = useState();
+  const [selectedProvincia, setSelectedProvincia] = useState();
+  const [ciudadesTodas, setCiudadesTodas] = useState();
+  const [ciudades, setCiudades] = useState();
 
   const IdentificacionOption = [
     { key: 1, value: "CEDULA", text: "CEDULA" },
@@ -34,16 +40,6 @@ const Registro = () => {
     { key: 2, value: "MUJER", text: "MUJER" },
   ];
 
-  const Provincias = [
-    { key: 1, value: "PICHINCHA", text: "PICHINCHA" },
-    // { key: 2, value: 'GUAYAS', text: 'GUAYAS' },
-  ];
-
-  const Ciudades = [
-    { key: 1, value: "QUITO", text: "QUITO" },
-    // { key: 2, value: 'MACHACHI', text: 'MACHACHI' },
-  ];
-
   const Formato = [
     { key: 1, value: "FIRMA EN LA NUBE", text: "FIRMA EN LA NUBE" },
     { key: 2, value: "ARCHIVO .P12", text: "ARCHIVO .P12" },
@@ -58,6 +54,46 @@ const Registro = () => {
     { key: 5, value: "5 años", text: "5 años" },
     { key: 6, value: "7 días", text: "7 días" },
   ];
+
+  useEffect(() => {
+    ProvinciasRequest()
+      .then((res) => {
+        let provincias = [];
+        res.response.forEach((provincia) => {
+          provincias.push({
+            key: provincia.id,
+            value: provincia.id,
+            text: provincia.nombre,
+          });
+        });
+        setProvincias(provincias);
+      })
+      .catch((error) => {
+        console.log("Error Provincias Request: ", error);
+      });
+    CiudadesRequest()
+      .then((res) => {
+        setCiudadesTodas(res.response);
+      })
+      .catch((error) => {});
+  }, []);
+
+  useEffect(() => {
+    if (selectedProvincia) {
+      let tempCiudades = ciudadesTodas.filter(
+        (ciudad) => ciudad.provincia_id === selectedProvincia
+      );
+      let ciudadesProvincia = [];
+      tempCiudades.forEach((ciudad) => {
+        ciudadesProvincia.push({
+          key: ciudad.id,
+          value: ciudad.id,
+          text: ciudad.nombre,
+        });
+      });
+      setCiudades(ciudadesProvincia);
+    }
+  }, [selectedProvincia]);
 
   const validacionSchema = Yup.object({
     nombreCompleto: Yup.string().required("Campo obligatorio"),
@@ -156,7 +192,6 @@ const Registro = () => {
       fileSelfie: "",
     },
     onSubmit: (formData) => {
-      // console.log(formData);
       save(formData);
     },
     validationSchema: validacionSchema,
@@ -180,7 +215,6 @@ const Registro = () => {
   const handleFileChange = (e, nombre) => {
     if (e.target.files) {
       // setFile(e.target.files[0]);
-      console.log(e.target.files[0]);
       formik.setFieldValue(nombre, e.target.files[0]);
     }
   };
@@ -450,12 +484,13 @@ const Registro = () => {
                 <Form.Field>Provincia</Form.Field>
                 <Form.Dropdown
                   placeholder="Seleccione..."
-                  options={Provincias}
+                  options={provincias}
                   name="provincias"
                   selection
-                  onChange={(_, data) =>
-                    formik.setFieldValue("provincias", data.value)
-                  }
+                  onChange={(_, data) => {
+                    formik.setFieldValue("provincias", data.value);
+                    setSelectedProvincia(data.value);
+                  }}
                   error={formik.errors.provincias}
                   value={formik.values.provincias}
                 />
@@ -464,12 +499,12 @@ const Registro = () => {
                 <Form.Field>Ciudad</Form.Field>
                 <Form.Dropdown
                   placeholder="Seleccione..."
-                  options={Ciudades}
+                  options={ciudades}
                   name="ciudades"
                   selection
-                  onChange={(_, data) =>
-                    formik.setFieldValue("ciudades", data.value)
-                  }
+                  onChange={(_, data) => {
+                    formik.setFieldValue("ciudades", data.value);
+                  }}
                   error={formik.errors.ciudades}
                   value={formik.values.ciudades}
                 />
