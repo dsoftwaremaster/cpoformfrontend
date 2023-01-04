@@ -57,7 +57,6 @@ const Registro = () => {
   ];
 
   useEffect(() => {
-    console.log("fecha:: ", sub({ years: 18 }, new Date()));
     ProvinciasRequest()
       .then((res) => {
         let provincias = [];
@@ -150,6 +149,10 @@ const Registro = () => {
       .min(13, "El RUC debe tener mínimo 13 dígitos")
       .max(13, "El RUC debe tener máximo 13 dígitos")
       .test("Requerido", "Campo obligatorio", (value) => validateConRuc(value)),
+    fileFront: Yup.mixed().required("Campo obligatorio"),
+    fileBack: Yup.mixed().required("Campo obligatorio"),
+    fileSelfie: Yup.mixed().required("Campo obligatorio"),
+    fileCarta: Yup.mixed().required("Campo obligatorio"),
   });
 
   useEffect(() => {
@@ -215,13 +218,13 @@ const Registro = () => {
   const save = async (formData) => {
     await saveFormularioRequest(formData)
       .then((res) => {
-        console.log(res);
         setShowAlert(true);
         formik.handleReset();
         regresar();
       })
       .catch((error) => {
         setShowAlertError(true);
+        console.log(error);
       });
   };
   const regresar = () => {
@@ -242,9 +245,13 @@ const Registro = () => {
   };
 
   const validateConRuc = (value) => {
-    console.log("dentro del validate: ", value);
     if (conRuc) {
-      if (value === undefined || value === "" || value === "undefined" || value === null) {
+      if (
+        value === undefined ||
+        value === "" ||
+        value === "undefined" ||
+        value === null
+      ) {
         return false;
       } else {
         return true;
@@ -285,6 +292,7 @@ const Registro = () => {
                         type="file"
                         name="fileFront"
                         onChange={(e) => handleFileChange(e, "fileFront")}
+                        error={formik.errors.fileFront}
                       ></Form.Input>
                       <h4>Foto lado frontal de su Cédula</h4>
                     </a>
@@ -301,6 +309,7 @@ const Registro = () => {
                         type="file"
                         name="fileBack"
                         onChange={(e) => handleFileChange(e, "fileBack")}
+                        error={formik.errors.fileBack}
                       />
                       <h4>Foto lado posterior de su Cédula</h4>
                     </a>
@@ -318,6 +327,7 @@ const Registro = () => {
                         type="file"
                         name="fileSelfie"
                         onChange={(e) => handleFileChange(e, "fileSelfie")}
+                        error={formik.errors.fileSelfie}
                       />
                       <h4>Foto selfie con su Cédula</h4>
                     </a>
@@ -333,6 +343,7 @@ const Registro = () => {
                         type="file"
                         name="fileCarta"
                         onChange={(e) => handleFileChange(e, "fileCarta")}
+                        error={formik.errors.fileCarta}
                       />
                       <h4>Copia del RUC</h4>
                     </a>
@@ -504,7 +515,6 @@ const Registro = () => {
                             label="Si"
                             name="conRuc"
                             onChange={() => {
-                              console.log("clickeo Si");
                               setConRuc(true);
                             }}
                             checked={conRuc}
@@ -517,7 +527,6 @@ const Registro = () => {
                             label="No"
                             name="conRuc"
                             onChange={() => {
-                              console.log("clickeo No");
                               setConRuc(false);
                             }}
                             checked={!conRuc}
@@ -549,7 +558,6 @@ const Registro = () => {
                             label="Si"
                             name="conRuc"
                             onChange={() => {
-                              console.log("clickeo Si");
                               setConRuc(true);
                             }}
                             checked={conRuc}
@@ -562,7 +570,6 @@ const Registro = () => {
                             label="No"
                             name="conRuc"
                             onChange={() => {
-                              console.log("clickeo No");
                               setConRuc(false);
                             }}
                             checked={!conRuc}
