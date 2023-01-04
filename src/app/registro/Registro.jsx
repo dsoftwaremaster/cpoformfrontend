@@ -706,7 +706,7 @@ const Registro = () => {
                 <Message floating color="yellow">
                   {/* <Message.Header>Error</Message.Header> */}
                   <Message.Content>
-                    <strong>Los siguientes campos tienes errores:</strong>{" "}
+                    <strong>Los siguientes campos tienen errores:</strong>{" "}
                     {Object.keys(formik.errors).map((error) => error + "    ")}.{" "}
                     <br />
                     <center>
