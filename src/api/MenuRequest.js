@@ -1,7 +1,7 @@
 import { API } from "./ApiConfig";
 const URL_GRUPO = "/menu";
 
-//Provincias
+//Menu
 export const MenuRequest = async () => {
   const request = await API.get(URL_GRUPO + "/");
   const response = request.data;

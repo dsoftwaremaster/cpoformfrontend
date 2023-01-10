@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import 'semantic-ui-css/semantic.min.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Menu from './app/menu/Menu';
-import IndexLogin from './app/login/IndexLogin';
 import SignUpForm from './app/signup/SignUpForm';
+import LoginForm from './app/login/LoginForm';
+import Registro from './app/registro/Registro';
+import 'semantic-ui-css/semantic.min.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,8 +14,9 @@ root.render(
     <Routes>
       <Route index path='/' element={<Menu />}>
       </Route>
-      <Route path='/firma-electronica' element={<IndexLogin />} />
+      <Route path='/firma-electronica' element={<LoginForm />} />
       <Route path='/firma-electronica/signup' element={<SignUpForm />} />
+      <Route path='/firma-electronica/registro' element={<Registro />} />
     </Routes>
   </BrowserRouter>
 );
