@@ -28,6 +28,7 @@ const Registro = () => {
   const IdentificacionOption = [
     { key: 1, value: "CEDULA", text: "CEDULA" },
     { key: 2, value: "RUC", text: "RUC" },
+    { key: 3, value: "PASAPORTE", text: "PASAPORTE" },
   ];
 
   const Nacionalidad = [
@@ -56,6 +57,33 @@ const Registro = () => {
     { key: 6, value: "7 días", text: "7 días" },
   ];
 
+  const NombresCampo = [
+    { interno: 'nombreCompleto', externo: 'Nombres Completos' },
+    { interno: 'fechaNacimiento', externo: 'Fecha de Nacimiento' },
+    { interno: 'tipoIdentificacion', externo: 'Tipo de Identificación' },
+    { interno: 'identificacion', externo: 'Identificación' },
+    { interno: 'nacionalidad', externo: 'Nacionalidad' },
+    { interno: 'apellidoUno', externo: 'Primer Apellido' },
+    { interno: 'apellidoDos', externo: 'Segundo Apellido' },
+    { interno: 'codigoDactilar', externo: 'Código Dactilar' },
+    { interno: 'sexo', externo: 'Sexo' },
+    { interno: 'celular', externo: 'Celular' },
+    { interno: 'celularDos', externo: 'Celular Dos' },
+    { interno: 'mail', externo: 'Correo electrónico' },
+    { interno: 'mailDos', externo: 'Correo electrónico alternativo' },
+    { interno: 'provincias', externo: 'Provincia' },
+    { interno: 'ciudades', externo: 'Ciudad' },
+    { interno: 'direccion', externo: 'Dirección' },
+    { interno: 'formato', externo: 'Formato de firma electrónica' },
+    { interno: 'vigencia', externo: 'Vigencia de la firma electrónica' },
+    { interno: 'express', externo: 'Servicio Express' },
+    { interno: 'fileFront', externo: 'Documento Frontal' },
+    { interno: 'fileBack', externo: 'Documento Posterior' },
+    { interno: 'fileCarta', externo: 'Documento Adicional' },
+    { interno: 'fileSelfie', externo: 'Foto Selfie con su identificación' },
+    { interno: 'fileRUC', externo: 'Copia del RUC' },
+  ]
+
   useEffect(() => {
     ProvinciasRequest()
       .then((res) => {
@@ -76,7 +104,7 @@ const Registro = () => {
       .then((res) => {
         setCiudadesTodas(res.response);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }, []);
 
   useEffect(() => {
@@ -152,7 +180,8 @@ const Registro = () => {
     fileFront: Yup.mixed().required("Campo obligatorio"),
     fileBack: Yup.mixed().required("Campo obligatorio"),
     fileSelfie: Yup.mixed().required("Campo obligatorio"),
-    fileCarta: Yup.mixed().required("Campo obligatorio"),
+    fileCarta: Yup.mixed(),
+    fileRUC: Yup.mixed().test("Requerido", "Campo obligatorio", (value) => validateConRuc(value))
   });
 
   useEffect(() => {
@@ -183,6 +212,20 @@ const Registro = () => {
     }
   }, [showAlertError]);
 
+  useEffect(() => {
+    if (conRuc) {
+      if (formik.values.identificacion.length > 0 && formik.values.identificacion.length <= 10) {
+        formik.setFieldValue("firmaConRuc", formik.values.identificacion + "001");
+      }
+      if (formik.values.identificacion.length == 13) {
+        formik.setFieldValue("firmaConRuc", formik.values.identificacion);
+      }
+    } else {
+      formik.setFieldValue("firmaConRuc", '');
+    }
+  }, [conRuc])
+
+
   const formik = useFormik({
     initialValues: {
       nombreCompleto: "",
@@ -208,6 +251,7 @@ const Registro = () => {
       fileBack: "",
       fileCarta: "",
       fileSelfie: "",
+      fileRUC: ""
     },
     onSubmit: (formData) => {
       save(formData);
@@ -260,6 +304,11 @@ const Registro = () => {
       return true;
     }
   };
+
+  const nombreAdornado = (field) => {
+    let tempNombre = NombresCampo.find((nombre) => nombre.interno === field);
+    return tempNombre.externo;
+  }
 
   return (
     <Container>
@@ -345,11 +394,27 @@ const Registro = () => {
                         onChange={(e) => handleFileChange(e, "fileCarta")}
                         error={formik.errors.fileCarta}
                       />
-                      <h4>Copia del RUC</h4>
+                      <h4>Documento Adicional</h4>
                     </a>
                   </>
                 </div>
               </div>
+              {conRuc && <div className="column">
+                <div className="ui segment">
+                  <>
+                    <a className="ui medium image">
+                      <img src={cartaAutorizacion} />
+                      <Form.Input
+                        type="file"
+                        name="fileRUC"
+                        onChange={(e) => handleFileChange(e, "fileRUC")}
+                        error={formik.errors.fileRUC}
+                      />
+                      <h4>Copia del RUC</h4>
+                    </a>
+                  </>
+                </div>
+              </div>}
             </div>
             <button className="ui secondary button" onClick={() => regresar()}>
               Regresar
@@ -707,7 +772,7 @@ const Registro = () => {
                   {/* <Message.Header>Error</Message.Header> */}
                   <Message.Content>
                     <strong>Los siguientes campos tienen errores:</strong>{" "}
-                    {Object.keys(formik.errors).map((error) => error + "    ")}.{" "}
+                    {Object.keys(formik.errors).map((error) => nombreAdornado(error) + "    ")}.{" "}
                     <br />
                     <center>
                       <strong>
