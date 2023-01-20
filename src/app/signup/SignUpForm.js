@@ -28,7 +28,7 @@ function SignUpForm() {
             .then((res) => {
                 if (res) {
                     setShowAlert(true);
-                    console.log(res.response);
+                    //console.log(res.response);
                 }
             })
             .catch((error) => {
@@ -42,7 +42,7 @@ function SignUpForm() {
             repeatPassword: '',
         },
         onSubmit: (formData) => {
-            console.log(formData);
+            //console.log(formData);
             registerRequest(formData);
         },
         validationSchema: Yup.object({

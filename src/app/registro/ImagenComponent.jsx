@@ -1,7 +1,7 @@
 import { Form, FormField } from "semantic-ui-react";
 
 const ImagenComponent = ({ imagenPath, name, formik }) => {
-  console.log("formik: " + formik);
+  //console.log("formik: " + formik);
   return (
     <>
       <a className="ui medium image">

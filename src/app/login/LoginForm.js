@@ -29,7 +29,7 @@ function LoginForm() {
             .then((res) => {
                 if (res) {
                     setShowAlert(true);
-                    console.log(res.response);
+                    //console.log(res.response);
                 }
             })
             .catch((error) => {
@@ -43,7 +43,7 @@ function LoginForm() {
             repeatPassword: '',
         },
         onSubmit: (formData) => {
-            console.log(formData);
+            //console.log(formData);
             loginRequest(formData);
         },
         validationSchema: Yup.object({

@@ -1,5 +1,5 @@
 //AMBIENTES - local, test, produccion
-const ambiente = 'produccion';
+const ambiente = 'produccionConDominio';
 
 const api_config = {
     local: {
@@ -13,6 +13,9 @@ const api_config = {
     },
     produccion: {
         url: 'http://52.206.72.188/backform/public/api',
+    },
+    produccionConDominio: {
+        url: 'https://itsoftware.com.ec/backform/public/api',
     }
 
 }

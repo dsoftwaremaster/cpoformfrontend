@@ -18,7 +18,7 @@ function CardMenu({ data }) {
             {data.nombre}
           </a>
           <div class="meta" style={{ textAlign: "center" }}>
-            <span class="date" > desde $0.99/mes</span>
+            {/* <span class="date" > desde $0.99/mes</span> */}
           </div>
           <div class="description" style={{ textAlign: "center" }}>
             {data.descripcion}

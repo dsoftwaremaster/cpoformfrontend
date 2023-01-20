@@ -9,7 +9,7 @@ const Menu = () => {
   const menuRequest = () => {
     MenuRequest()
       .then((res) => {
-        console.log(res.menu);
+        //console.log(res.menu);
         setMenu(res.menu);
       })
       .catch((error) => {
