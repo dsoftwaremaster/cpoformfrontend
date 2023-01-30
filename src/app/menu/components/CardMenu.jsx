@@ -11,7 +11,7 @@ function CardMenu({ data }) {
     <Grid.Column>
       <div class="ui card">
         <div class="image">
-          <Image src="https://react.semantic-ui.com/images/wireframe/image.png" />
+          {data.img ? <Image src={data.img} /> : <Image src="https://react.semantic-ui.com/images/wireframe/image.png" />}
         </div>
         <div class="content">
           <a class="header" style={{ textAlign: "center" }}>

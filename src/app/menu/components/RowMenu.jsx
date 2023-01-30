@@ -5,7 +5,7 @@ import CardMenu from "./CardMenu";
 function RowMenu({ columns, data }) {
   return (
     <>
-      <Grid.Row columns={columns}>
+      <Grid.Row columns={columns} centered>
         {data &&
           data.map((menu) => {
             return <CardMenu data={menu}></CardMenu>;
