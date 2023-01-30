@@ -29,7 +29,7 @@ const Menu = () => {
         <p>Nuestros servicios al alcance de tu mano</p>
         <br />
       </div>
-      <Grid>
+      <Grid centered>
         <RowMenu columns={3} data={menu}></RowMenu>
       </Grid>
     </React.Fragment>
