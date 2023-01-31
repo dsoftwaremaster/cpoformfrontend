@@ -3,8 +3,6 @@ import { Button, Container, Form, Radio, Message } from "semantic-ui-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { saveFormularioRequest } from "../../api/FormRequest";
-import Documentos from "./Documentos";
-import ImagenComponent from "./ImagenComponent";
 import idfront from "./img/id-Card-front.png";
 import idback from "./img/id-Card-back.png";
 import selfie from "./img/Selfie_cedula_Ejemplo.png";

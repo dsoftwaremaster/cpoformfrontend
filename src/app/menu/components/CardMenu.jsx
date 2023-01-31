@@ -8,7 +8,7 @@ function CardMenu({ data }) {
   };
 
   return (
-    <Grid.Column>
+    <>
       <div class="ui card">
         <div class="image">
           {data.img ? <Image src={data.img} /> : <Image src="https://react.semantic-ui.com/images/wireframe/image.png" />}
@@ -42,7 +42,7 @@ function CardMenu({ data }) {
           </a>
         </div>
       </div>
-    </Grid.Column>
+    </>
   );
 }
 
