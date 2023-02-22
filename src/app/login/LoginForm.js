@@ -16,7 +16,7 @@ function LoginForm() {
             setTimeout(() => {
                 setShowAlert(false);
                 // window.location.href = "/";
-                navigate('/firma-electronica/registro');
+                // navigate('/firma-electronica/registro');
             }, 3000);
         }
     }, [showAlert]);
@@ -29,7 +29,7 @@ function LoginForm() {
             .then((res) => {
                 if (res) {
                     setShowAlert(true);
-                    //console.log(res.response);
+                    console.log(res.data.usuario);
                 }
             })
             .catch((error) => {
