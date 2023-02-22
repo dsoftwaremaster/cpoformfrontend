@@ -22,6 +22,8 @@ const Registro = () => {
   const [ciudadesTodas, setCiudadesTodas] = useState();
   const [ciudades, setCiudades] = useState();
   const [conRuc, setConRuc] = useState(false);
+  const [clicGuardar, setClicGuardar] = useState(false);
+  const [mostrarErrores, setMostrarErrores] = useState(false);
 
   const IdentificacionOption = [
     { key: 1, value: "CEDULA", text: "CEDULA" },
@@ -102,7 +104,7 @@ const Registro = () => {
       .then((res) => {
         setCiudadesTodas(res.response);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }, []);
 
   useEffect(() => {
@@ -121,6 +123,33 @@ const Registro = () => {
       setCiudades(ciudadesProvincia);
     }
   }, [selectedProvincia]);
+
+  const initialValues = {
+    nombreCompleto: "",
+    fechaNacimiento: "",
+    tipoIdentificacion: "",
+    identificacion: "",
+    nacionalidad: "",
+    apellidoUno: "",
+    apellidoDos: "",
+    codigoDactilar: "",
+    sexo: "",
+    celular: "",
+    celularDos: "",
+    mail: "",
+    mailDos: "",
+    provincias: "",
+    ciudades: "",
+    direccion: "",
+    formato: "",
+    vigencia: "",
+    express: 0,
+    fileFront: "",
+    fileBack: "",
+    fileCarta: "",
+    fileSelfie: "",
+    fileRUC: "",
+  };
 
   const validacionSchema = Yup.object({
     nombreCompleto: Yup.string().required("Campo obligatorio"),
@@ -231,37 +260,20 @@ const Registro = () => {
     }
   }, [conRuc]);
 
+  useEffect(() => {
+    if (clicGuardar) {
+      if (Object.keys(formik.errors).length > 0) {
+        setMostrarErrores(true);
+      }
+    }
+  }, [clicGuardar])
+
   const formik = useFormik({
-    initialValues: {
-      nombreCompleto: "",
-      fechaNacimiento: "",
-      tipoIdentificacion: "",
-      identificacion: "",
-      nacionalidad: "",
-      apellidoUno: "",
-      apellidoDos: "",
-      codigoDactilar: "",
-      sexo: "",
-      celular: "",
-      celularDos: "",
-      mail: "",
-      mailDos: "",
-      provincias: "",
-      ciudades: "",
-      direccion: "",
-      formato: "",
-      vigencia: "",
-      express: 0,
-      fileFront: "",
-      fileBack: "",
-      fileCarta: "",
-      fileSelfie: "",
-      fileRUC: "",
-    },
+    initialValues: initialValues,
     onSubmit: (formData) => {
       save(formData);
     },
-    validationSchema: validacionSchema,
+    validationSchema: validacionSchema
   });
 
   const save = async (formData) => {
@@ -347,7 +359,7 @@ const Registro = () => {
                         type="file"
                         name="fileFront"
                         onChange={(e) => handleFileChange(e, "fileFront")}
-                        error={formik.errors.fileFront}
+                        error={formik.touched.fileFront && formik.errors.fileFront ? formik.errors.fileFront : null}
                       ></Form.Input>
                       <h4>Foto lado frontal de su Cédula</h4>
                     </a>
@@ -364,7 +376,7 @@ const Registro = () => {
                         type="file"
                         name="fileBack"
                         onChange={(e) => handleFileChange(e, "fileBack")}
-                        error={formik.errors.fileBack}
+                        error={formik.touched.fileBack && formik.errors.fileBack ? formik.errors.fileBack : null}
                       />
                       <h4>Foto lado posterior de su Cédula</h4>
                     </a>
@@ -382,7 +394,7 @@ const Registro = () => {
                         type="file"
                         name="fileSelfie"
                         onChange={(e) => handleFileChange(e, "fileSelfie")}
-                        error={formik.errors.fileSelfie}
+                        error={formik.touched.fileSelfie && formik.errors.fileSelfie ? formik.errors.fileSelfie : null}
                       />
                       <h4>Foto selfie con su Cédula</h4>
                     </a>
@@ -399,7 +411,7 @@ const Registro = () => {
                           type="file"
                           name="fileRUC"
                           onChange={(e) => handleFileChange(e, "fileRUC")}
-                          error={formik.errors.fileRUC}
+                          error={formik.touched.fileRUC && formik.errors.fileRUC ? formik.errors.fileRUC : null}
                         />
                         <h4>Copia del RUC</h4>
                       </a>
@@ -416,7 +428,7 @@ const Registro = () => {
                         type="file"
                         name="fileCarta"
                         onChange={(e) => handleFileChange(e, "fileCarta")}
-                        error={formik.errors.fileCarta}
+                        error={formik.touched.fileCarta && formik.errors.fileCarta ? formik.errors.fileCarta : null}
                       />
                       <h4>Documento Adicional</h4>
                     </a>
@@ -446,7 +458,7 @@ const Registro = () => {
                   options={IdentificacionOption}
                   name="tipoIdentificacion"
                   selection
-                  error={formik.errors.tipoIdentificacion}
+                  error={formik.touched.tipoIdentificacion && formik.errors.tipoIdentificacion ? formik.errors.tipoIdentificacion : null}
                   value={formik.values.tipoIdentificacion}
                   onChange={(_, data) => {
                     formik.setFieldValue("tipoIdentificacion", data.value);
@@ -458,14 +470,14 @@ const Registro = () => {
                   placeholder="Nombres completos"
                   name="nombreCompleto"
                   onChange={formik.handleChange}
-                  error={formik.errors.nombreCompleto}
+                  error={formik.touched.nombreCompleto && formik.errors.nombreCompleto ? formik.errors.nombreCompleto : null}
                   value={formik.values.nombreCompleto}
                 />
                 <Form.Input
                   type="date"
                   name="fechaNacimiento"
                   onChange={formik.handleChange}
-                  error={formik.errors.fechaNacimiento}
+                  error={formik.touched.fechaNacimiento && formik.errors.fechaNacimiento ? formik.errors.fechaNacimiento : null}
                   value={formik.values.fechaNacimiento}
                 />
               </div>
@@ -475,7 +487,7 @@ const Registro = () => {
                   placeholder="Identificación"
                   name="identificacion"
                   onChange={formik.handleChange}
-                  error={formik.errors.identificacion}
+                  error={formik.touched.identificacion && formik.errors.identificacion ? formik.errors.identificacion : null}
                   value={formik.values.identificacion}
                   maxLength={maxLengthIdentificacion}
                 />
@@ -487,7 +499,7 @@ const Registro = () => {
                   placeholder="Primer apellido"
                   name="apellidoUno"
                   onChange={formik.handleChange}
-                  error={formik.errors.apellidoUno}
+                  error={formik.touched.apellidoUno && formik.errors.apellidoUno ? formik.errors.apellidoUno : null}
                   value={formik.values.apellidoUno}
                 />
                 <Form.Dropdown
@@ -495,7 +507,7 @@ const Registro = () => {
                   options={Nacionalidad}
                   name="nacionalidad"
                   selection
-                  error={formik.errors.nacionalidad}
+                  error={formik.touched.nacionalidad && formik.errors.nacionalidad ? formik.errors.nacionalidad : null}
                   value={formik.values.nacionalidad}
                   onChange={(_, data) =>
                     formik.setFieldValue("nacionalidad", data.value)
@@ -508,7 +520,7 @@ const Registro = () => {
                   placeholder="Código Dactilar"
                   name="codigoDactilar"
                   onChange={formik.handleChange}
-                  error={formik.errors.codigoDactilar}
+                  error={formik.touched.codigoDactilar && formik.errors.codigoDactilar ? formik.errors.codigoDactilar : null}
                   value={formik.values.codigoDactilar}
                   maxLength={10}
                 />
@@ -517,7 +529,7 @@ const Registro = () => {
                   placeholder="Segundo apellido"
                   name="apellidoDos"
                   onChange={formik.handleChange}
-                  error={formik.errors.apellidoDos}
+                  error={formik.touched.apellidoDos && formik.errors.apellidoDos ? formik.errors.apellidoDos : null}
                   value={formik.values.apellidoDos}
                 />
                 <Form.Dropdown
@@ -525,7 +537,7 @@ const Registro = () => {
                   options={Sexo}
                   name="sexo"
                   selection
-                  error={formik.errors.sexo}
+                  error={formik.touched.sexo && formik.errors.sexo ? formik.errors.sexo : null}
                   value={formik.values.sexo}
                   onChange={(_, data) =>
                     formik.setFieldValue("sexo", data.value)
@@ -540,7 +552,7 @@ const Registro = () => {
                   placeholder="Celular"
                   name="celular"
                   onChange={formik.handleChange}
-                  error={formik.errors.celular}
+                  error={formik.touched.celular && formik.errors.celular ? formik.errors.celular : null}
                   value={formik.values.celular}
                   maxLength={10}
                 />
@@ -549,7 +561,7 @@ const Registro = () => {
                   placeholder="Otro número Celular"
                   name="celularDos"
                   onChange={formik.handleChange}
-                  error={formik.errors.celularDos}
+                  error={formik.touched.celularDos && formik.errors.celularDos ? formik.errors.celularDos : null}
                   value={formik.values.celularDos}
                   maxLength={10}
                 />
@@ -560,7 +572,7 @@ const Registro = () => {
                   placeholder="Email"
                   name="mail"
                   onChange={formik.handleChange}
-                  error={formik.errors.mail}
+                  error={formik.touched.mail && formik.errors.mail ? formik.errors.mail : null}
                   value={formik.values.mail}
                 />
                 <Form.Input
@@ -568,7 +580,7 @@ const Registro = () => {
                   placeholder="Email alternativo"
                   name="mailDos"
                   onChange={formik.handleChange}
-                  error={formik.errors.mailDos}
+                  error={formik.touched.mailDos && formik.errors.mailDos ? formik.errors.mailDos : null}
                   value={formik.values.mailDos}
                 />
               </div>
@@ -613,7 +625,7 @@ const Registro = () => {
                             placeholder="RUC"
                             name="firmaConRuc"
                             onChange={formik.handleChange}
-                            error={formik.errors.firmaConRuc}
+                            error={formik.touched && formik.errors.firmaConRuc ? formik.errors.firmaConRuc : null}
                             value={formik.values.firmaConRuc}
                             maxLength={13}
                           />
@@ -668,7 +680,7 @@ const Registro = () => {
                     formik.setFieldValue("provincias", data.value);
                     setSelectedProvincia(data.value);
                   }}
-                  error={formik.errors.provincias}
+                  error={formik.touched.provincias && formik.errors.provincias ? formik.errors.provincias : null}
                   value={formik.values.provincias}
                 />
               </div>
@@ -682,7 +694,7 @@ const Registro = () => {
                   onChange={(_, data) => {
                     formik.setFieldValue("ciudades", data.value);
                   }}
-                  error={formik.errors.ciudades}
+                  error={formik.touched.ciudades && formik.errors.ciudades ? formik.errors.ciudades : null}
                   value={formik.values.ciudades}
                 />
               </div>
@@ -695,7 +707,7 @@ const Registro = () => {
                   onChange={(_, data) =>
                     formik.setFieldValue("direccion", data.value)
                   }
-                  error={formik.errors.direccion}
+                  error={formik.touched.direccion && formik.errors.direccion ? formik.errors.direccion : null}
                   value={formik.values.direccion}
                 />
               </div>
@@ -712,7 +724,7 @@ const Registro = () => {
                   onChange={(_, data) =>
                     formik.setFieldValue("formato", data.value)
                   }
-                  error={formik.errors.formato}
+                  error={formik.touched.formato && formik.errors.formato ? formik.errors.formato : null}
                   value={formik.values.formato}
                 />
               </div>
@@ -726,7 +738,7 @@ const Registro = () => {
                   onChange={(_, data) =>
                     formik.setFieldValue("vigencia", data.value)
                   }
-                  error={formik.errors.vigencia}
+                  error={formik.touched.vigencia && formik.errors.vigencia ? formik.errors.vigencia : null}
                   value={formik.values.vigencia}
                 />
               </div>
@@ -736,7 +748,7 @@ const Registro = () => {
                   label="Serv. Express:"
                   name="express"
                   onChange={formik.handleChange}
-                  error={formik.errors.express}
+                  error={formik.touched.express && formik.errors.express ? formik.errors.express : null}
                 />
               </div>
             </div>
@@ -770,20 +782,24 @@ const Registro = () => {
             <Button
               className="ui primary button"
               type="submit"
-              disabled={Object.keys(formik.errors).length > 0}
+              onClick={() => {
+                setClicGuardar(true);
+              }}
+              disabled={mostrarErrores && Object.keys(formik.errors).length > 0}
             >
               Guardar
             </Button>
-            {Object.keys(formik.errors).length > 0 && (
+            <br />
+            {mostrarErrores && Object.keys(formik.errors).length > 0 && (
               <>
                 <Message floating color="yellow">
-                  {/* <Message.Header>Error</Message.Header> */}
                   <Message.Content>
                     <strong>Los siguientes campos tienen errores:</strong>{" "}
                     {Object.keys(formik.errors).map(
                       (error) => " - " + nombreAdornado(error) + " - "
                     )}
-                    . <br />
+                    .
+                    <br />
                     <center>
                       <strong>
                         El botón de guardar se activará cuando los errores sean
