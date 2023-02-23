@@ -6,7 +6,8 @@ const config = {
     "Content-Type": "multipart/form-data",
   },
 };
-//productoMasVendido
+
+//Guardar Solicitudes de firma electrónica
 export const saveFormularioRequest = async (data) => {
   const request = await API.post(URL_GUARDAR_FORMULARIO, data, config);
   const response = request.data;

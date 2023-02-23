@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Menu from './app/pages/menu/Menu';
 import SignUpForm from './app/pages/signup/SignUpForm';
 import LoginForm from './app/pages/login/LoginForm';
@@ -19,7 +19,11 @@ function App() {
       <Routes>
         <Route index path='/' element={<Menu />}>
         </Route>
-        <Route path='/firma-electronica' element={auth ? <Registro /> : <LoginForm />} />
+        <Route path='/firma-electronica' element={
+          auth ?
+            <Navigate to="/firma-electronica/registro" replace /> :
+            <LoginForm />}
+        />
         <Route path='/firma-electronica/signup' element={<SignUpForm />} />
         <Route path='/firma-electronica/registro' element={<Registro />} />
       </Routes>

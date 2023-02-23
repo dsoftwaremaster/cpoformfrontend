@@ -30,8 +30,8 @@ const Registro = () => {
 
   const IdentificacionOption = [
     { key: 1, value: "CEDULA", text: "CEDULA" },
-    { key: 2, value: "RUC", text: "RUC" },
-    { key: 3, value: "PASAPORTE", text: "PASAPORTE" },
+    { key: 2, value: "PASAPORTE", text: "PASAPORTE" },
+    // { key: 3, value: "RUC", text: "RUC" },
   ];
 
   const Nacionalidad = [
@@ -46,9 +46,9 @@ const Registro = () => {
   ];
 
   const Formato = [
-    { key: 1, value: "FIRMA EN LA NUBE", text: "FIRMA EN LA NUBE" },
+    // { key: 1, value: "FIRMA EN LA NUBE", text: "FIRMA EN LA NUBE" },
     { key: 2, value: "ARCHIVO .P12", text: "ARCHIVO .P12" },
-    { key: 3, value: "EN TOKEN", text: "EN TOKEN" },
+    // { key: 3, value: "EN TOKEN", text: "EN TOKEN" },
   ];
 
   const Vigencia = [
@@ -107,7 +107,7 @@ const Registro = () => {
       .then((res) => {
         setCiudadesTodas(res.response);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }, []);
 
   useEffect(() => {
@@ -280,9 +280,14 @@ const Registro = () => {
   });
 
   const save = async (formData) => {
-    await saveFormularioRequest(formData)
+    const data = {
+      ...formData,
+      user_id: userAuth.id,
+      estado: 'CREADA'
+    }
+    await saveFormularioRequest(data)
       .then((res) => {
-        //console.log(res);
+        console.log(res);
         setShowAlert(true);
         formik.handleReset();
         regresar();
@@ -334,7 +339,7 @@ const Registro = () => {
   return (
     <Container>
       <br />
-      <h1 style={{ textAlign: "center" }}>INGRESE SUS DATOS: {userAuth.email}</h1>
+      <h1 style={{ textAlign: "center" }}>INGRESE SUS DATOS:</h1>
       <h4 style={{ textAlign: "center" }}>
         Con esta información generaremos tu firma electrónica
       </h4>
@@ -476,6 +481,7 @@ const Registro = () => {
             )}
             <div className="ui three column grid">
               <div className="column">
+                <Form.Field>Tipo de Identificación</Form.Field>
                 <Form.Dropdown
                   placeholder="Seleccione..."
                   options={IdentificacionOption}
@@ -483,7 +489,7 @@ const Registro = () => {
                   selection
                   error={
                     formik.touched.tipoIdentificacion &&
-                    formik.errors.tipoIdentificacion
+                      formik.errors.tipoIdentificacion
                       ? formik.errors.tipoIdentificacion
                       : null
                   }
@@ -493,6 +499,7 @@ const Registro = () => {
                     setTipoIdentificacion(data.value);
                   }}
                 />
+                <Form.Field>Nombres</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Nombres completos"
@@ -500,19 +507,20 @@ const Registro = () => {
                   onChange={formik.handleChange}
                   error={
                     formik.touched.nombreCompleto &&
-                    formik.errors.nombreCompleto
+                      formik.errors.nombreCompleto
                       ? formik.errors.nombreCompleto
                       : null
                   }
                   value={formik.values.nombreCompleto}
                 />
+                <Form.Field>Fecha de nacimiento</Form.Field>
                 <Form.Input
                   type="date"
                   name="fechaNacimiento"
                   onChange={formik.handleChange}
                   error={
                     formik.touched.fechaNacimiento &&
-                    formik.errors.fechaNacimiento
+                      formik.errors.fechaNacimiento
                       ? formik.errors.fechaNacimiento
                       : null
                   }
@@ -520,6 +528,7 @@ const Registro = () => {
                 />
               </div>
               <div className="column">
+                <Form.Field>Identificación</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Identificación"
@@ -527,16 +536,14 @@ const Registro = () => {
                   onChange={formik.handleChange}
                   error={
                     formik.touched.identificacion &&
-                    formik.errors.identificacion
+                      formik.errors.identificacion
                       ? formik.errors.identificacion
                       : null
                   }
                   value={formik.values.identificacion}
                   maxLength={maxLengthIdentificacion}
                 />
-                <Form.Group>
-                  <></>
-                </Form.Group>
+                <Form.Field>Primer Apellido</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Primer apellido"
@@ -549,6 +556,7 @@ const Registro = () => {
                   }
                   value={formik.values.apellidoUno}
                 />
+                <Form.Field>Nacionalidad</Form.Field>
                 <Form.Dropdown
                   placeholder="Seleccione..."
                   options={Nacionalidad}
@@ -566,6 +574,7 @@ const Registro = () => {
                 />
               </div>
               <div className="column">
+                <Form.Field>Código Dactilar</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Código Dactilar"
@@ -573,13 +582,14 @@ const Registro = () => {
                   onChange={formik.handleChange}
                   error={
                     formik.touched.codigoDactilar &&
-                    formik.errors.codigoDactilar
+                      formik.errors.codigoDactilar
                       ? formik.errors.codigoDactilar
                       : null
                   }
                   value={formik.values.codigoDactilar}
                   maxLength={10}
                 />
+                <Form.Field>Segundo Apellido</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Segundo apellido"
@@ -592,6 +602,7 @@ const Registro = () => {
                   }
                   value={formik.values.apellidoDos}
                 />
+                <Form.Field>Sexo</Form.Field>
                 <Form.Dropdown
                   placeholder="Seleccione..."
                   options={Sexo}
@@ -611,6 +622,7 @@ const Registro = () => {
             </div>
             <div className="ui two column grid">
               <div className="column">
+                <Form.Field>Teléfono</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Celular"
@@ -624,6 +636,7 @@ const Registro = () => {
                   value={formik.values.celular}
                   maxLength={10}
                 />
+                <Form.Field>Otro Número Telefónico</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Otro número Celular"
@@ -639,6 +652,7 @@ const Registro = () => {
                 />
               </div>
               <div className="column">
+              <Form.Field>Correo Electrónico</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Email"
@@ -651,6 +665,7 @@ const Registro = () => {
                   }
                   value={formik.values.mail}
                 />
+                <Form.Field>Correo Electrónico Alternativo</Form.Field>
                 <Form.Input
                   type="text"
                   placeholder="Email alternativo"
@@ -672,7 +687,7 @@ const Registro = () => {
                   {conRuc ? (
                     <div className="ui four column grid">
                       <div className="column">
-                        <Form.Field>Con RUC:</Form.Field>
+                        <Form.Field>¿Con RUC?:</Form.Field>
                       </div>
                       <div className="column">
                         <Form.Field>
@@ -719,7 +734,7 @@ const Registro = () => {
                   ) : (
                     <div className="ui three column grid">
                       <div className="column">
-                        <Form.Field>Con RUC:</Form.Field>
+                        <Form.Field>¿Con RUC?:</Form.Field>
                       </div>
                       <div className="column">
                         <Form.Field>
@@ -809,7 +824,7 @@ const Registro = () => {
               </div>
             </div>
             <h3>Formato y Tiempo de Vigencia</h3>
-            <div className="ui three column grid">
+            <div className="ui two column grid">
               <div className="column">
                 <Form.Field>En Formato</Form.Field>
                 <Form.Dropdown
@@ -846,7 +861,7 @@ const Registro = () => {
                   value={formik.values.vigencia}
                 />
               </div>
-              <div className="column">
+              {/* <div className="column">
                 <Form.Field></Form.Field>
                 <Form.Checkbox
                   label="Serv. Express:"
@@ -858,7 +873,7 @@ const Registro = () => {
                       : null
                   }
                 />
-              </div>
+              </div> */}
             </div>
             <br />
             <div className="ui two column grid">
