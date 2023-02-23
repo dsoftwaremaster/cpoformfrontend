@@ -3,20 +3,20 @@ import { Link } from 'react-router-dom'
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { LoginRequest, RegistrarRequest } from '../../api/AuthRequest';
+import { RegistrarRequest } from '../../api/AuthRequest';
 import { useNavigate } from 'react-router-dom';
 import logo from "./aplogo.png";
 
-function LoginForm() {
+function SignUpForm() {
 
     const [showAlert, setShowAlert] = useState(false);
     const navigate = useNavigate();
+
     useEffect(() => {
         if (showAlert) {
             setTimeout(() => {
                 setShowAlert(false);
-                // window.location.href = "/";
-                // navigate('/firma-electronica/registro');
+                navigate('/firma-electronica');
             }, 3000);
         }
     }, [showAlert]);
@@ -24,12 +24,12 @@ function LoginForm() {
     const dismiss = () => {
         setShowAlert(false);
     };
-    const loginRequest = (data) => {
-        LoginRequest(data)
+    const registerRequest = (data) => {
+        RegistrarRequest(data)
             .then((res) => {
                 if (res) {
                     setShowAlert(true);
-                    console.log(res.data.usuario);
+                    //console.log(res.response);
                 }
             })
             .catch((error) => {
@@ -44,11 +44,12 @@ function LoginForm() {
         },
         onSubmit: (formData) => {
             //console.log(formData);
-            loginRequest(formData);
+            registerRequest(formData);
         },
         validationSchema: Yup.object({
             email: Yup.string().required('Campo obligatorio').email('No es un email válido.'),
             password: Yup.string().required('Campo obligatorio').min(8, 'Mínimo 8 caracteres.').max(12, 'Máximo 12 caracteres.'),
+            repeatPassword: Yup.string().required('Campo obligatorio').oneOf([Yup.ref('password'), null], 'Las contraseñas no coinciden.'),
         })
     });
 
@@ -59,9 +60,9 @@ function LoginForm() {
             </Header>
             {showAlert && <>
                 <Message floating info onDismiss={dismiss} >
-                    <Message.Header>¡Éxito!</Message.Header>
+                    <Message.Header>¡Felicitaciones!</Message.Header>
                     <Message.Content>
-                        <p>Ingresando al Sistema</p>
+                        <p>Serás redirigido al inicio de sesión</p>
                     </Message.Content>
                 </Message>
             </>}
@@ -85,14 +86,24 @@ function LoginForm() {
                         onChange={formik.handleChange}
                         error={formik.errors.password}
                     />
+                    <Form.Input
+                        fluid
+                        icon='lock'
+                        iconPosition='left'
+                        placeholder='Repetir Contraseña'
+                        type='password'
+                        name='repeatPassword'
+                        onChange={formik.handleChange}
+                        error={formik.errors.repeatPassword}
+                    />
 
                     <Button color='teal' fluid size='large' type='submit'>
-                        Iniciar Sesión
+                        Registrarse
                     </Button>
                 </Segment>
             </Form>
             <Message>
-                ¿Eres nuevo? <Link to={'/firma-electronica/signup'}>Regístrate</Link>
+                <Link to={'/firma-electronica'}>Regresar</Link>
             </Message>
         </Grid.Column>
     </Grid>
@@ -102,4 +113,4 @@ function LoginForm() {
 
 
 
-export default LoginForm;
+export default SignUpForm;

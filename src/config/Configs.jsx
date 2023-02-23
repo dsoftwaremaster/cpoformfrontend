@@ -1,5 +1,5 @@
 //AMBIENTES - local, test, produccion
-const ambiente = 'produccionConD';
+const ambiente = 'local';
 
 const api_config = {
     local: {
